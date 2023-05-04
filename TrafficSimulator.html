@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+    <body>
+
+        <!--
+            1. Make an overall or "parent" div for all other elements to fit in
+            2. Create divs for animation of traffic, sliders, inputs, and tabs (each different
+            colour.)
+        -->
+        <div id="display">
+
+            <canvas id="screen"></canvas>
+            <div id="inputs">
+        
+                <div id="tabs">
+                    <button id="Traffic" disabled onclick="Trafficfunc()">Traffic</button>
+                    <button id="Stats" onclick="Statsfunc()">Stats</button>
+                    <button id="Back" onclick="Backfunc()">Back</button>
+                </div>
+                <div id="secondary_screen">
+
+                    <h1>Speed Limit</h1>
+                    <input id="speedLimit" type="range" min="100" max="1800" value="600">
+                    <br/><br/><br/><br/><br/>
+                    
+                    <h1>Car Density</h1>
+                    <input id="carDensity" type="range" min="-2000" max="0" value="-1000">
+                    <br/><br/><br/><br/><br/>
+
+                    <h1>Critical Gap</h1>
+                    <input id="criticalGap" type="range" min="10" max="100" value="40">
+                    <br/><br/><br/><br/><br/>
+                    
+                    <h1>Aggression</h1>
+                    <input id="aggression" type="range" min="0" max="50" value="0">
+                    <br/><br/><br/><br/>
+
+                    <button id="colours" onclick="Colours()">Show Braking System</button>
+
+                </div>
+                <div id="stats_screen">
+                    <canvas id="graph"></canvas>
+                    <canvas id="graph2"></canvas>
+                    <canvas id="graph3"></canvas>
+                </div>
+                
+
+            </div>
+        </div>
+        <div id="main_menu">
+            <br/><br/><br/>
+            <p1 id="title">Traffic Simulation</p1>
+            <p1 id="pattyB">By Patrick Browne</p1>
+            <button id="start" onclick="Startfunc()">Start</button>
+            <button id="about">About</button>
+            <button id="exit" onclick="finish()">Exit</button>
+        </div>
+        <div id="about_screen">
+            <h1 id="how">How do Traffic Simulations Work?</h1>
+            <br/><br/><br/><br/><br/>
+            <p1 id="explanation">Traffic simulations involve 
+                the mathematical modeling of transportation 
+                systems through the application of computer software 
+                to better help plan, design, and operate transportation
+                systems. This program visually demonstrates the interactions between individual 
+                elements of transportation systems, which are affected by:
+            </p1>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <ul>
+                <li><p2>Speed limits</p2>, which indicates the maximum speed vehicles can travel at;</li>
+                <li><p2>Car density</p2>, which is the number of cars per km squared affecting traffic flow;</li>
+                <li><p2>Critical gap</p2>, which is the distance between the vehicles; and</li>
+                <li><p2>Aggression</p2>, which determines the probability of angry drivers beeping their horns....</li>
+            </ul>
+            <button id="back_about">Back</button>
+              
+              
+            
+        </div>
+        <!-- This source is for graphing Chart.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js" integrity="sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="Display.js"></script>
+        <script src="Screens.js"></script>
+        <style>
+            #back_about {
+                float: none;
+                position: absolute;
+                right: 0%;
+                bottom: 0%;
+                border-radius: 12px;
+                transition: 0.25s;
+            }
+            #back_about:hover {
+                background-color: #F1FAEE;
+                color: #1d3557;
+                border: 2px solid #1d3557;
+            }
+            p2 {
+                text-decoration: underline #F1FAEE;
+            }
+            ul {
+                position: absolute;
+                float: none;
+                text-align: justify;
+                margin-left: 30px;
+                margin-right: 30px;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+                font-size: 30px;
+                line-height: 1.6;
+            }
+            #how {
+                position: absolute;
+                text-align: center;
+                font-family: "Lucida Console", "Courier New", monospace;
+                color: #F1FAEE;
+                font-size: 40px;
+                margin-left: 30px;
+                font-weight: bold;
+
+            }
+            #explanation {
+                position: absolute;
+                float: none;
+                text-align: justify;
+                margin-left: 30px;
+                margin-right: 30px;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+                font-size: 30px;
+                line-height: 1.6;
+            }
+
+            #about_screen {
+                display: none;
+                background-color: #457b9d; 
+                margin: 0px;
+            }
+            #graph {
+                display: none;
+                background-color: #457b9d;
+            }
+            #graph2 {
+                display: none;
+                background-color: #457b9d;
+            }
+            #graph3 {
+                display: none;
+                background-color: #457b9d;
+            }
+            #main_menu {
+                display: block;
+                border: 0px;
+                background-color: #457b9d;
+            }
+            /* #title {
+                position: absolute;
+                width: 100%;
+                float: none;
+                text-align: center;
+                margin-top: 10px;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+                font-size: 120px;
+                transition: 00.4s;
+            }
+            #title:hover {
+                color: #1d3557;
+            } */
+            #title {
+                position: absolute;
+                width: 100%;
+                float: none;
+                text-align: center;
+                margin-top: 10px;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+                font-size: 120px;
+                transition: 0.7s;
+            }
+
+            #title:hover {
+                color: #c5c2b8;
+                cursor: default;
+            }
+
+
+            #pattyB {
+                position: absolute;
+                float: left;
+                bottom: 0%;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+                font-size: 20px;
+                text-align: center;
+            }
+            #start {
+                float: none;
+                position: absolute;
+                right: 10%;
+                transition: 0.25s;
+                border-radius: 12px;
+            }
+            #start:hover {
+                background-color: #F1FAEE;
+                color: #1d3557;
+                border: 2px solid #1d3557;
+            }
+
+            #about {
+                float: none;
+                position: absolute;
+                right: 10%;
+                transition: 0.25s;
+                border-radius: 12px;
+            }
+            #about:hover {
+                background-color: #F1FAEE;
+                color: #1d3557;
+                border: 2px solid #1d3557;
+            }
+            #exit {
+                float: none;
+                position: absolute;
+                right: 10%;
+                transition: 0.25s;
+                border-radius: 12px;
+            }
+            #exit:hover {
+                background-color: #F1FAEE;
+                color: #1d3557;
+                border: 2px solid #1d3557;
+            }
+            #stats_screen {
+                display: none;
+            }
+
+            body {
+                margin: 0px;
+            }
+            #display {
+                display: none;
+                border: 0px solid black;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+            }
+            
+            #inputs {
+                border: 0px;
+                float:right;
+                background-color: #457b9d;
+            }
+            #screen {
+                border: 0px;
+                background-color: #09B051;
+                float: left;
+            }
+            #tabs {
+                border: 0px;
+                background-color: #1d3557;
+            }
+
+            h1 {
+                text-align: center;
+            }
+            input {
+                position: absolute;
+                width: 25%;
+                left: 71%;
+                /*overrides appearance of sliders (for different browsers) and changes design. I learnt about this from
+                https://www.w3schools.com/howto/howto_js_rangeslider.asp
+                */
+                -webkit-appearance: none;
+                appearance: none;
+                margin: 0px;
+                margin-right: auto;
+                height: 30px;
+                background: #1d3557;
+                outline: none;
+                opacity: 0.7;
+                -webkit-transition: 0.25s;
+                transition: 0.25s;
+                border-radius: 12px;
+            }
+            input:hover {
+                /*layout of sliders when mouse hovers over it*/
+                opacity: 1;
+            }
+            input::-webkit-slider-thumb {
+                /*sets appearance of the slider*/
+                -webkit-appearance: none; 
+                appearance: none;
+                width: 25px; 
+                height: 40px;
+                background: #F1FAEE;
+                cursor: pointer; /* Cursor on hover */
+                border-radius: 8px;
+            }
+            #colours {
+                position: absolute;
+                left:71%;
+                width: 25%;
+                height: 50px;
+                background-color: #1d3557;
+                color: #F1FAEE;
+                font-family: "Lucida Console", "Courier New", monospace;
+                border-radius: 8px;
+                border: 2px solid #F1FAEE;
+                font-size: 20px;
+                -webkit-transition: 0.25s;
+                transition: 0.25s;
+            }
+            #colours:hover {
+                background-color: #F1FAEE;
+                color: #1d3557;
+                border: 2px solid #1d3557;
+            }
+            button {
+                float: left;
+                height: 100%;
+                width:33.333%;
+                background-color: #1d3557;
+                border: 2px solid #F1FAEE;
+                color: #F1FAEE;
+                -webkit-transition: 0.25s;
+                transition: 0.25s;
+                font-weight: bold;
+                font-family: "Lucida Console", "Courier New", monospace;
+                font-size: 25px;
+                cursor: pointer;
+            }
+            button:disabled {
+                background-color: #F1FAEE;
+                color: #1d3557;
+                border: 2px solid #1d3557;
+                cursor: auto;
+            }
+        </style>
+    </body>
+</html>
